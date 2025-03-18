@@ -1,5 +1,6 @@
-#pragma once
 #include "WavHeader.h"
+
+#pragma once
 #include <fstream>
 #include <iostream>
 #include <vector>
