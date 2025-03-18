@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KeyBright_DSP", "KeyBright_
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KeyBright_DSP_Pitch", "..\KeyBright_DSP_Pitch\KeyBright_DSP_Pitch.vcxproj", "{F4684266-55E2-4D73-AC91-A8E03ECE7076}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KeyBright_DSP_Color", "..\KeyBright_DSP_Color\KeyBright_DSP_Color.vcxproj", "{D6C0C5B1-1AFA-46FC-9184-E1D31C0C8324}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{F4684266-55E2-4D73-AC91-A8E03ECE7076}.Release|x64.Build.0 = Release|x64
 		{F4684266-55E2-4D73-AC91-A8E03ECE7076}.Release|x86.ActiveCfg = Release|Win32
 		{F4684266-55E2-4D73-AC91-A8E03ECE7076}.Release|x86.Build.0 = Release|Win32
+		{D6C0C5B1-1AFA-46FC-9184-E1D31C0C8324}.Debug|x64.ActiveCfg = Debug|x64
+		{D6C0C5B1-1AFA-46FC-9184-E1D31C0C8324}.Debug|x64.Build.0 = Debug|x64
+		{D6C0C5B1-1AFA-46FC-9184-E1D31C0C8324}.Debug|x86.ActiveCfg = Debug|Win32
+		{D6C0C5B1-1AFA-46FC-9184-E1D31C0C8324}.Debug|x86.Build.0 = Debug|Win32
+		{D6C0C5B1-1AFA-46FC-9184-E1D31C0C8324}.Release|x64.ActiveCfg = Release|x64
+		{D6C0C5B1-1AFA-46FC-9184-E1D31C0C8324}.Release|x64.Build.0 = Release|x64
+		{D6C0C5B1-1AFA-46FC-9184-E1D31C0C8324}.Release|x86.ActiveCfg = Release|Win32
+		{D6C0C5B1-1AFA-46FC-9184-E1D31C0C8324}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
