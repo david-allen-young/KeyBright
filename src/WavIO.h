@@ -19,6 +19,11 @@ bool readWavFile(const std::string& filename, WavHeader& header, std::vector<int
         std::cerr << "Error: Invalid WAV file format\n";
         return false;
     }
+    if (header.audioFormat != 1) // 1 = PCM
+    {
+        std::cerr << "Error: Unsupported audio format (Only PCM is supported)\n";
+        return false;
+    }
     size_t numSamples = header.dataSize / (header.bitsPerSample / 8);
     samples.resize(numSamples);
     file.read(reinterpret_cast<char*>(samples.data()), header.dataSize);
@@ -35,7 +40,7 @@ bool writeWavFile(const std::string& filename, const WavHeader& header, const st
         return false;
     }
     WavHeader outputHeader = header;
-    outputHeader.dataSize = samples.size() * sizeof(int16_t);
+    outputHeader.dataSize = static_cast<uint32_t>(samples.size()) * (outputHeader.bitsPerSample / 8);
     outputHeader.chunkSize = outputHeader.dataSize + sizeof(WavHeader) - 8;
     file.write(reinterpret_cast<const char*>(&outputHeader), sizeof(WavHeader));
     file.write(reinterpret_cast<const char*>(samples.data()), outputHeader.dataSize);

@@ -10,7 +10,7 @@
 
 float pitchFactor(int semitones)
 {
-    return std::pow(2.0, static_cast<float>(semitones) / 12.0f);
+    return std::pow(2.0f, static_cast<float>(semitones) / 12.0f);
 }
 
 int16_t linearInterpolation(int16_t a, int16_t b, float t)
