@@ -73,8 +73,6 @@ int main(int argc, char* argv[])
     std::cout << "Processing: " << inputFile << " -> " << outputFile << std::endl;
     std::cout << "Applying pitch shift: " << semitones << " semitones (factor: " << pitchFactor(semitones) << ")" << std::endl;
     auto processedSamples = applyPitchShift(samples, pitchFactor(semitones));
-    header.dataSize = processedSamples.size() * sizeof(int16_t);
-    header.chunkSize = header.dataSize + sizeof(WavHeader) - 8;
     if (!writeWavFile(outputFile, header, processedSamples))
     {
         return 1;
