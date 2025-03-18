@@ -15,7 +15,9 @@ float pitchFactor(int semitones)
 
 int16_t linearInterpolation(int16_t a, int16_t b, float t)
 {
-    return static_cast<int16_t>(std::round((1 - t) * a + t * b));
+    auto lhs = (1 - t) * a;
+    auto rhs = t * b;
+    return static_cast<int16_t>(std::round(lhs + rhs));
 }
 
 std::vector<int16_t> applyPitchShift(const std::vector<int16_t>& samples, float pitchFactor)
