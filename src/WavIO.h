@@ -27,6 +27,10 @@ bool readWavFile(const std::string& filename, WavHeader& header, std::vector<int
     size_t numSamples = header.dataSize / (header.bitsPerSample / 8);
     samples.resize(numSamples);
     file.read(reinterpret_cast<char*>(samples.data()), header.dataSize);
+    if (file.gcount() < header.dataSize)
+    {
+        std::cerr << "Warning: File size mismatch. Some samples may be missing.\n";
+    }
     file.close();
     return true;
 }
@@ -41,7 +45,7 @@ bool writeWavFile(const std::string& filename, const WavHeader& header, const st
     }
     WavHeader outputHeader = header;
     outputHeader.dataSize = static_cast<uint32_t>(samples.size()) * (outputHeader.bitsPerSample / 8);
-    outputHeader.chunkSize = outputHeader.dataSize + sizeof(WavHeader) - 8;
+    outputHeader.chunkSize = 36 + outputHeader.dataSize;
     file.write(reinterpret_cast<const char*>(&outputHeader), sizeof(WavHeader));
     file.write(reinterpret_cast<const char*>(samples.data()), outputHeader.dataSize);
     file.close();
