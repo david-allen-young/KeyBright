@@ -37,17 +37,30 @@ bool readWavFile(const std::string& filename, WavHeader& header, std::vector<int
 
 bool writeWavFile(const std::string& filename, const WavHeader& header, const std::vector<int16_t>& samples)
 {
-    std::ofstream file(filename, std::ios::binary);
+    std::cout << "writeWavFile() called!" << std::endl; // Debugging message
+    if (samples.empty())
+    {
+        std::cerr << "Warning: Attempting to write an empty file." << std::endl;
+    }
+    /*TEMP DEBUG*/
+    std::string hardcode = "C:\\Users\\chief\\OneDrive\\Documents\\VS Sandbox\\Test_OutputFile.wav";
+    /**/
+    std::ofstream file(/*filename*/hardcode, std::ios::binary);
     if (!file)
     {
-        std::cerr << "Error: Cannot write to file " << filename << std::endl;
+        std::cerr << "Error: Cannot write to file " << /*filename*/hardcode << std::endl;
         return false;
     }
     WavHeader outputHeader = header;
     outputHeader.dataSize = static_cast<uint32_t>(samples.size()) * (outputHeader.bitsPerSample / 8);
     outputHeader.chunkSize = 36 + outputHeader.dataSize;
+    std::cout << "Writing WAV header...\n";
     file.write(reinterpret_cast<const char*>(&outputHeader), sizeof(WavHeader));
+    std::cout << "Header written.\n";
+    std::cout << "Writing sample data...\n";
     file.write(reinterpret_cast<const char*>(samples.data()), outputHeader.dataSize);
+    std::cout << "Sample data written.\n";
     file.close();
+    file.flush();
     return true;
 }
