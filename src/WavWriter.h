@@ -1,4 +1,3 @@
-#pragma once
 #include <cstdint>
 #include <cstring>
 #include <fstream>
@@ -24,7 +23,7 @@ struct WavHeader_Writer
 };
 #pragma pack(pop)
 
-bool writeWavFile(const std::string& filename, const WavHeader_Writer& header, const std::vector<int16_t>& samples)
+bool writeWavFile(const std::string& filename, WavHeader_Writer header, const std::vector<int16_t>& samples)
 {
     std::ofstream file(filename, std::ios::binary);
     if (!file)
@@ -33,17 +32,25 @@ bool writeWavFile(const std::string& filename, const WavHeader_Writer& header, c
         return false;
     }
 
-    // Compute actual file sizes
-    uint32_t fileSize = 36 + header.dataSize;                   // 36 bytes (header) + data size
-    WavHeader_Writer modifiedHeader = header;                   // Copy header to modify it
-    modifiedHeader.chunkSize = fileSize - 8;                    // RIFF chunkSize = fileSize - 8
-    modifiedHeader.dataSize = samples.size() * sizeof(int16_t); // Num samples * bytes per sample
+    // Compute actual data size (in bytes)
+    header.dataSize = samples.size() * sizeof(int16_t); // Total audio data size
+    header.chunkSize = 36 + header.dataSize;            // 36 bytes (header) + dataSize
 
-    // Write header
-    file.write(reinterpret_cast<const char*>(&modifiedHeader), sizeof(WavHeader_Writer));
+    // Log values for debugging
+    std::cout << "[INFO] Writing WAV file: " << filename << std::endl;
+    std::cout << "[INFO] Channels: " << header.numChannels << std::endl;
+    std::cout << "[INFO] Sample Rate: " << header.sampleRate << " Hz" << std::endl;
+    std::cout << "[INFO] Bits Per Sample: " << header.bitsPerSample << std::endl;
+    std::cout << "[INFO] Byte Rate: " << header.byteRate << std::endl;
+    std::cout << "[INFO] Block Align: " << header.blockAlign << std::endl;
+    std::cout << "[INFO] Data Size: " << header.dataSize << " bytes" << std::endl;
+    std::cout << "[INFO] Total File Size: " << header.chunkSize + 8 << " bytes" << std::endl;
+
+    // Write WAV header (44 bytes)
+    file.write(reinterpret_cast<const char*>(&header), sizeof(WavHeader_Writer));
 
     // Write sample data
-    file.write(reinterpret_cast<const char*>(samples.data()), modifiedHeader.dataSize);
+    file.write(reinterpret_cast<const char*>(samples.data()), header.dataSize);
 
     file.close();
     std::cout << "[SUCCESS] WAV file written successfully: " << filename << std::endl;
