@@ -132,8 +132,8 @@
     <ClCompile Include="KeyBright_DSP_Pitch.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\WavHeader.h" />
-    <ClInclude Include="..\src\WavIO.h" />
+    <ClInclude Include="..\src\WavReader.h" />
+    <ClInclude Include="..\src\WavWriter.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
