@@ -71,6 +71,7 @@ int main(int argc, char* argv[])
     std::vector<int16_t> samples;
     if (!readWavFile(inputFile, header, samples))
     {
+		std::cerr << "Failed to read input file: " << inputFile << std::endl;
         return 1;
     }
     std::cout << "Processing: " << inputFile << " -> " << outputFile << std::endl;
@@ -78,6 +79,7 @@ int main(int argc, char* argv[])
     auto processedSamples = applyPitchShift(samples, pitchFactor(semitones));
     if (!writeWavFile(outputFile, header, processedSamples))
     {
+		std::cerr << "Failed to write output file: " << outputFile << std::endl;
         return 1;
     }
 	std::cout << "Pitch shift applied. Output saved to " << outputFile << std::endl;
