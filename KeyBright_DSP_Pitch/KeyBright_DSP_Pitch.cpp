@@ -1,5 +1,5 @@
 //#include "../src/WavHeader.h"
-#include "../src/WavIO.h"
+#include "../src/WavReader.h"
 
 #pragma once
 #include <string>
@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
 	std::string inputFile = argv[1];
 	std::string outputFile = argv[2];
 	int semitones = std::stoi(argv[3]);
-    WavHeader header;
+    WavHeader_Reader header;
     std::vector<int16_t> samples;
     if (!readWavFile(inputFile, header, samples))
     {
