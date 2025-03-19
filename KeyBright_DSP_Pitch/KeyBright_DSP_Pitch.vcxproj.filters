@@ -20,10 +20,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\WavHeader.h">
+    <ClInclude Include="..\src\WavReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\WavIO.h">
+    <ClInclude Include="..\src\WavWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
