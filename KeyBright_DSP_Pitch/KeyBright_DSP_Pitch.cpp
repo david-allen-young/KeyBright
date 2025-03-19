@@ -1,5 +1,5 @@
-//#include "../src/WavHeader.h"
 #include "../src/WavReader.h"
+#include "../src/WavWriter.h"
 
 #pragma once
 #include <string>
@@ -67,22 +67,23 @@ int main(int argc, char* argv[])
 	std::string inputFile = argv[1];
 	std::string outputFile = argv[2];
 	int semitones = std::stoi(argv[3]);
-    WavHeader_Reader header;
+    WavHeader_Reader header_reader;
     std::vector<int16_t> samples;
-    if (!readWavFile(inputFile, header, samples))
+    if (!readWavFile(inputFile, header_reader, samples))
     {
 		std::cerr << "Failed to read input file: " << inputFile << std::endl;
         return 1;
     }
-    //std::cout << "Processing: " << inputFile << " -> " << outputFile << std::endl;
-    //std::cout << "Applying pitch shift: " << semitones << " semitones (factor: " << pitchFactor(semitones) << ")" << std::endl;
-    //auto processedSamples = applyPitchShift(samples, pitchFactor(semitones));
- //   if (!writeWavFile(outputFile, header, processedSamples))
- //   {
-	//	std::cerr << "Failed to write output file: " << outputFile << std::endl;
- //       return 1;
- //   }
-	//std::cout << "Pitch shift applied. Output saved to " << outputFile << std::endl;
+    std::cout << "Processing: " << inputFile << " -> " << outputFile << std::endl;
+    std::cout << "Applying pitch shift: " << semitones << " semitones (factor: " << pitchFactor(semitones) << ")" << std::endl;
+    auto processedSamples = applyPitchShift(samples, pitchFactor(semitones));
+    WavHeader_Writer header_writer;
+    if (!writeWavFile(outputFile, header_writer, processedSamples))
+    {
+		std::cerr << "Failed to write output file: " << outputFile << std::endl;
+        return 1;
+    }
+	std::cout << "Pitch shift applied. Output saved to " << outputFile << std::endl;
 	return 0;
 }
 
