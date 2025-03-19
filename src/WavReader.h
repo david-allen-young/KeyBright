@@ -1,3 +1,4 @@
+#pragma once
 #include <cstdint>
 #include <cstring>
 #include <fstream>
@@ -5,7 +6,7 @@
 #include <vector>
 
 #pragma pack(push, 1)
-struct WavHeader
+struct WavHeader_Reader
 {
         char riff[4];       // "RIFF"
         uint32_t chunkSize; // File size - 8 bytes
@@ -14,7 +15,7 @@ struct WavHeader
 #pragma pack(pop)
 
 // Read WAV file dynamically with logging
-bool readWavFile(const std::string& filename, WavHeader& header, std::vector<int16_t>& samples)
+bool readWavFile(const std::string& filename, WavHeader_Reader& header, std::vector<int16_t>& samples)
 {
     std::ifstream file(filename, std::ios::binary);
     if (!file)
@@ -24,7 +25,7 @@ bool readWavFile(const std::string& filename, WavHeader& header, std::vector<int
     }
 
     // Read RIFF header
-    file.read(reinterpret_cast<char*>(&header), sizeof(WavHeader));
+    file.read(reinterpret_cast<char*>(&header), sizeof(WavHeader_Reader));
     if (std::string(header.riff, 4) != "RIFF" || std::string(header.wave, 4) != "WAVE")
     {
         std::cerr << "[ERROR] Invalid WAV file format\n";
