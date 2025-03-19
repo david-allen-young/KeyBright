@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <filesystem>
 
 #pragma pack(push, 1)
 struct WavHeader_Reader
@@ -93,9 +94,8 @@ bool readWavFile(const std::string& filename, WavHeader_Reader& header, std::vec
             //           (static_cast<uint8_t>(checkBytes[3]) << 24);
 
             // Hack:
-            // Limit data size to fit known source
-            //dataSize = 0x0000C000;
-            dataSize = 49152;
+            // Limit data size to fit source
+            dataSize = static_cast<uint32_t>(std::filesystem::file_size(filename));
 
             std::streampos posAfter = file.tellg();
             std::cout << "[DEBUG] File position after reading dataSize: " << posAfter << std::endl;
