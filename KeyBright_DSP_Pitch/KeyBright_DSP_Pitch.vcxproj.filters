@@ -26,5 +26,8 @@
     <ClInclude Include="..\src\WavWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\AudioFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
