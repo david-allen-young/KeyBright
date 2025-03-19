@@ -131,6 +131,12 @@
   <ItemGroup>
     <ClCompile Include="KeyBright_DSP_Color.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\AudioFile.h" />
+    <ClInclude Include="..\src\HighShelfFilter.h" />
+    <ClInclude Include="..\src\WavReader.h" />
+    <ClInclude Include="..\src\WavWriter.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
