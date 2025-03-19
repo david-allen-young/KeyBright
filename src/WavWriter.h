@@ -33,7 +33,7 @@ bool writeWavFile(const std::string& filename, WavHeader_Writer header, const st
     }
 
     // Compute actual data size (in bytes)
-    header.dataSize = samples.size() * sizeof(int16_t); // Total audio data size
+    header.dataSize = static_cast<uint32_t>(samples.size()) * sizeof(int16_t); // Total audio data size
     header.chunkSize = 36 + header.dataSize;            // 36 bytes (header) + dataSize
 
     // Log values for debugging

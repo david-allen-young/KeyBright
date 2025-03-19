@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
     header_writer.bitsPerSample = sourceFile.bitsPerSample;
     header_writer.byteRate = header_writer.sampleRate * header_writer.numChannels * (header_writer.bitsPerSample / 8);
     header_writer.blockAlign = header_writer.numChannels * (header_writer.bitsPerSample / 8);
-    header_writer.dataSize = processedSamples.size() * sizeof(int16_t);
+    header_writer.dataSize = static_cast<uint32_t>(processedSamples.size()) * sizeof(int16_t);
     header_writer.chunkSize = 36 + header_writer.dataSize;
     if (!writeWavFile(outputFile, header_writer, processedSamples))
     {
