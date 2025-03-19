@@ -1,4 +1,4 @@
-#include "../src/WavHeader.h"
+//#include "../src/WavHeader.h"
 #include "../src/WavIO.h"
 
 #pragma once
@@ -74,15 +74,15 @@ int main(int argc, char* argv[])
 		std::cerr << "Failed to read input file: " << inputFile << std::endl;
         return 1;
     }
-    std::cout << "Processing: " << inputFile << " -> " << outputFile << std::endl;
-    std::cout << "Applying pitch shift: " << semitones << " semitones (factor: " << pitchFactor(semitones) << ")" << std::endl;
-    auto processedSamples = applyPitchShift(samples, pitchFactor(semitones));
-    if (!writeWavFile(outputFile, header, processedSamples))
-    {
-		std::cerr << "Failed to write output file: " << outputFile << std::endl;
-        return 1;
-    }
-	std::cout << "Pitch shift applied. Output saved to " << outputFile << std::endl;
+    //std::cout << "Processing: " << inputFile << " -> " << outputFile << std::endl;
+    //std::cout << "Applying pitch shift: " << semitones << " semitones (factor: " << pitchFactor(semitones) << ")" << std::endl;
+    //auto processedSamples = applyPitchShift(samples, pitchFactor(semitones));
+ //   if (!writeWavFile(outputFile, header, processedSamples))
+ //   {
+	//	std::cerr << "Failed to write output file: " << outputFile << std::endl;
+ //       return 1;
+ //   }
+	//std::cout << "Pitch shift applied. Output saved to " << outputFile << std::endl;
 	return 0;
 }
 
