@@ -58,8 +58,7 @@ std::vector<int16_t> applyPitchShift(const std::vector<int16_t>& samples, float 
 
 int main(int argc, char* argv[])
 {
-    std::cout << "Current Working Directory: "
-              << std::filesystem::current_path() << std::endl;
+    std::cout << "Current Working Directory: " << std::filesystem::current_path() << std::endl;
 	if (argc != 4)
 	{
 		std::cerr << "Usage: " << "KeyBright_DSP_Pitch" << " <inputFile> <outputFile> <semitones>\n";
