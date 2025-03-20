@@ -32,5 +32,8 @@
     <ClInclude Include="..\src\AudioFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\LinearPitchShifter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
