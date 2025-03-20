@@ -19,8 +19,10 @@ int main(int argc, char* argv[])
 	int color = std::stoi(argv[3]);
 
 	WavHeader_Reader header_reader;
-    AudioFileData sourceFile = {};
-    if (!readWavFile(inputFile, header_reader, sourceFile.samples))
+    AudioFileData sourceFileData = {};
+    sourceFileData.filename = inputFile;
+    AudioFile sourceFile(sourceFileData);
+    if (!readWavFile(inputFile, header_reader, sourceFile.writeSamples()))
     {
         std::cerr << "Failed to read input file: " << inputFile << std::endl;
         return 1;
@@ -55,17 +57,17 @@ int main(int argc, char* argv[])
 	}
     const double cutoffFreq = 1000.0;
     const double Q = 0.707;
-    HighShelfFilter hsFilter(sourceFile.sampleRate, cutoffFreq, gainDB, Q);
+    HighShelfFilter hsFilter(sourceFile.getSampleRate(), cutoffFreq, gainDB, Q);
 
     std::vector<int16_t> outputSamples;
 
-    for (auto& sample : sourceFile.samples)
+    for (const auto& sample : sourceFile.readSamples())
     {
 		auto processedSample = static_cast<int16_t>(hsFilter.process(sample));
         outputSamples.push_back(processedSample);
     }
 
-    bool verbose = false;
+    bool verbose = true;
     if (verbose)
     {
         std::cout << "Filtered Output: ";
@@ -77,9 +79,9 @@ int main(int argc, char* argv[])
     }
 
     WavHeader_Writer header_writer = {};
-    header_writer.numChannels = sourceFile.numChannels;
-    header_writer.sampleRate = sourceFile.sampleRate;
-    header_writer.bitsPerSample = sourceFile.bitsPerSample;
+    header_writer.numChannels = sourceFile.getNumChannels();
+    header_writer.sampleRate = sourceFile.getSampleRate();
+    header_writer.bitsPerSample = sourceFile.getBitsPerSample();
     header_writer.byteRate = header_writer.sampleRate * header_writer.numChannels * (header_writer.bitsPerSample / 8);
     header_writer.blockAlign = header_writer.numChannels * (header_writer.bitsPerSample / 8);
     header_writer.dataSize = static_cast<uint32_t>(outputSamples.size()) * sizeof(int16_t);

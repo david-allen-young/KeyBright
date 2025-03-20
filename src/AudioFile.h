@@ -15,7 +15,8 @@ class AudioFile
 public:
 	AudioFile(AudioFileData data) : data(data) {}
 	AudioFileData getData() const { return data; }
-	std::vector<int16_t> getSamples() const { return data.samples; }
+	const std::vector<int16_t>& readSamples() const { return data.samples; }
+    std::vector<int16_t>& writeSamples() { return data.samples; }
 	int getNumChannels() const { return data.numChannels; }
 	int getSampleRate() const { return data.sampleRate; }
 	int getBitsPerSample() const { return data.bitsPerSample; }
