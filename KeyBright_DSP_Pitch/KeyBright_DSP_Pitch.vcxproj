@@ -129,10 +129,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\AudioFile.cpp" />
     <ClCompile Include="KeyBright_DSP_Pitch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\AudioFile.h" />
+    <ClInclude Include="..\src\LinearPitchShifter.h" />
     <ClInclude Include="..\src\WavReader.h" />
     <ClInclude Include="..\src\WavWriter.h" />
   </ItemGroup>
