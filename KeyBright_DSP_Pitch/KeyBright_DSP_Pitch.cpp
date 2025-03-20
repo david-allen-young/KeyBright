@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
 	std::string outputFile = argv[2];
 	int semitones = std::stoi(argv[3]);
     WavHeader_Reader header_reader;
-    AudioFile sourceFile = {};
+    AudioFileData sourceFile = {};
     if (!readWavFile(inputFile, header_reader, sourceFile.samples))
     {
 		std::cerr << "Failed to read input file: " << inputFile << std::endl;
