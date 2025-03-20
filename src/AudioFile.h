@@ -1,5 +1,7 @@
 #pragma once
+#include <cstdint>
 #include <vector>
+#include <string>
 
 struct AudioFileData
 {
@@ -13,13 +15,17 @@ struct AudioFileData
 class AudioFile
 {
 public:
-	AudioFile(AudioFileData data) : data(data) {}
+    AudioFile(std::string filename);
+    AudioFile(AudioFileData data);
 	AudioFileData getData() const { return data; }
 	const std::vector<int16_t>& readSamples() const { return data.samples; }
     std::vector<int16_t>& writeSamples() { return data.samples; }
 	int getNumChannels() const { return data.numChannels; }
 	int getSampleRate() const { return data.sampleRate; }
 	int getBitsPerSample() const { return data.bitsPerSample; }
+	std::string getFilename() const { return data.filename; }
+	bool isValid() const { return valid; }
 private:
-	AudioFileData data;
+    AudioFileData data = {};
+	bool valid = false;
 };
