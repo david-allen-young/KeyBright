@@ -1,5 +1,3 @@
-#include "../src/WavReader.h"
-#include "../src/WavWriter.h"
 #include "../src/AudioFile.h"
 
 #pragma once
@@ -68,29 +66,17 @@ int main(int argc, char* argv[])
 	std::string inputFile = argv[1];
 	std::string outputFile = argv[2];
 	int semitones = std::stoi(argv[3]);
-    WavHeader_Reader header_reader;
-    AudioFileData sourceFile = {};
-    if (!readWavFile(inputFile, header_reader, sourceFile.samples))
-    {
-		std::cerr << "Failed to read input file: " << inputFile << std::endl;
-        return 1;
-    }
+    AudioFile sourceFile(inputFile);
     std::cout << "Processing: " << inputFile << " -> " << outputFile << std::endl;
     std::cout << "Applying pitch shift: " << semitones << " semitones (factor: " << pitchFactor(semitones) << ")" << std::endl;
-    auto processedSamples = applyPitchShift(sourceFile.samples, pitchFactor(semitones));
-    WavHeader_Writer header_writer = {};
-    header_writer.numChannels = sourceFile.numChannels;
-    header_writer.sampleRate = sourceFile.sampleRate;
-    header_writer.bitsPerSample = sourceFile.bitsPerSample;
-    header_writer.byteRate = header_writer.sampleRate * header_writer.numChannels * (header_writer.bitsPerSample / 8);
-    header_writer.blockAlign = header_writer.numChannels * (header_writer.bitsPerSample / 8);
-    header_writer.dataSize = static_cast<uint32_t>(processedSamples.size()) * sizeof(int16_t);
-    header_writer.chunkSize = 36 + header_writer.dataSize;
-    if (!writeWavFile(outputFile, header_writer, processedSamples))
-    {
-		std::cerr << "Failed to write output file: " << outputFile << std::endl;
-        return 1;
-    }
+    auto outputSamples = applyPitchShift(sourceFile.readSamples(), pitchFactor(semitones));
+    AudioFileData outputData = {};
+    outputData.samples = outputSamples;
+    outputData.numChannels = sourceFile.getNumChannels();
+    outputData.sampleRate = sourceFile.getSampleRate();
+    outputData.bitsPerSample = sourceFile.getBitsPerSample();
+    outputData.filename = outputFile;
+    AudioFile destFile(outputData);
 	std::cout << "Pitch shift applied. Output saved to " << outputFile << std::endl;
 	return 0;
 }
