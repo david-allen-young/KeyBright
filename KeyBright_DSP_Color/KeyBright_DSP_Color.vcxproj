@@ -129,6 +129,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\AudioFile.cpp" />
     <ClCompile Include="KeyBright_DSP_Color.cpp" />
   </ItemGroup>
   <ItemGroup>
