@@ -1,5 +1,3 @@
-#include "../src/WavReader.h"
-#include "../src/WavWriter.h"
 #include "../src/AudioFile.h"
 #include "../src/HighShelfFilter.h"
 
@@ -18,16 +16,9 @@ int main(int argc, char* argv[])
 	std::string outputFile = argv[2];
 	int color = std::stoi(argv[3]);
 
-	WavHeader_Reader header_reader;
-    AudioFileData sourceFileData = {};
-    sourceFileData.filename = inputFile;
-    AudioFile sourceFile(sourceFileData);
-    if (!readWavFile(inputFile, header_reader, sourceFile.writeSamples()))
-    {
-        std::cerr << "Failed to read input file: " << inputFile << std::endl;
-        return 1;
-    }
-    std::cout << "Processing: " << inputFile << " -> " << outputFile << std::endl;
+	std::cout << "Processing: " << inputFile << " -> " << outputFile << std::endl;
+
+	AudioFile sourceFile(inputFile);
 
 	double gainDB = 0.0;
     if (color == -2)
@@ -60,7 +51,6 @@ int main(int argc, char* argv[])
     HighShelfFilter hsFilter(sourceFile.getSampleRate(), cutoffFreq, gainDB, Q);
 
     std::vector<int16_t> outputSamples;
-
     for (const auto& sample : sourceFile.readSamples())
     {
 		auto processedSample = static_cast<int16_t>(hsFilter.process(sample));
@@ -78,19 +68,13 @@ int main(int argc, char* argv[])
         std::cout << std::endl;
     }
 
-    WavHeader_Writer header_writer = {};
-    header_writer.numChannels = sourceFile.getNumChannels();
-    header_writer.sampleRate = sourceFile.getSampleRate();
-    header_writer.bitsPerSample = sourceFile.getBitsPerSample();
-    header_writer.byteRate = header_writer.sampleRate * header_writer.numChannels * (header_writer.bitsPerSample / 8);
-    header_writer.blockAlign = header_writer.numChannels * (header_writer.bitsPerSample / 8);
-    header_writer.dataSize = static_cast<uint32_t>(outputSamples.size()) * sizeof(int16_t);
-    header_writer.chunkSize = 36 + header_writer.dataSize;
-    if (!writeWavFile(outputFile, header_writer, outputSamples))
-    {
-        std::cerr << "Failed to write output file: " << outputFile << std::endl;
-        return 1;
-    }
+	AudioFileData outputData = {};
+	outputData.samples = outputSamples;
+	outputData.numChannels = sourceFile.getNumChannels();
+    outputData.sampleRate = sourceFile.getSampleRate();
+    outputData.bitsPerSample = sourceFile.getBitsPerSample();
+	outputData.filename = outputFile;
+	AudioFile destFile(outputData);
 
 	std::cout << "Color applied. Output saved to " << outputFile << std::endl;
 	return 0;
