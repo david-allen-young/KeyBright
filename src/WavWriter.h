@@ -9,18 +9,18 @@
 struct WavHeader_Writer
 {
         char riff[4] = {'R', 'I', 'F', 'F'};
-        uint32_t chunkSize; // File size - 8 bytes
+        uint32_t fileSize;
         char wave[4] = {'W', 'A', 'V', 'E'};
         char fmt[4] = {'f', 'm', 't', ' '};
-        uint32_t subchunk1Size = 16; // PCM = 16 bytes
-        uint16_t audioFormat = 1;    // PCM = 1
+        uint32_t formatSize = 16;
+        uint16_t audioFormat = 1;
         uint16_t numChannels;
         uint32_t sampleRate;
         uint32_t byteRate;
         uint16_t blockAlign;
         uint16_t bitsPerSample;
         char data[4] = {'d', 'a', 't', 'a'};
-        uint32_t dataSize; // Num samples * numChannels * bitsPerSample / 8
+        uint32_t dataSize;
 };
 #pragma pack(pop)
 
@@ -35,7 +35,7 @@ bool writeWavFile(const std::string& filename, WavHeader_Writer header, const st
 
     // Compute actual data size (in bytes)
     header.dataSize = static_cast<uint32_t>(samples.size()) * sizeof(int16_t); // Total audio data size
-    header.chunkSize = 36 + header.dataSize;            // 36 bytes (header) + dataSize
+    header.fileSize = sizeof(WavHeader_Writer) + header.dataSize;            // 44 bytes (header) + dataSize
 
     // Log values for debugging
     std::cout << "[INFO] Writing WAV file: " << filename << std::endl;
@@ -45,7 +45,7 @@ bool writeWavFile(const std::string& filename, WavHeader_Writer header, const st
     std::cout << "[INFO] Byte Rate: " << header.byteRate << std::endl;
     std::cout << "[INFO] Block Align: " << header.blockAlign << std::endl;
     std::cout << "[INFO] Data Size: " << header.dataSize << " bytes" << std::endl;
-    std::cout << "[INFO] Total File Size: " << header.chunkSize + 8 << " bytes" << std::endl;
+    std::cout << "[INFO] Total File Size: " << header.fileSize << " bytes" << std::endl;
 
     // Write WAV header (44 bytes)
     file.write(reinterpret_cast<const char*>(&header), sizeof(WavHeader_Writer));
