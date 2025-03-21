@@ -9,13 +9,12 @@
 #pragma pack(push, 1)
 struct WavHeader_Reader
 {
-        char riff[4];       // "RIFF"
-        uint32_t chunkSize; // File size - 8 bytes
-        char wave[4];       // "WAVE"
+        char riff[4];
+        uint32_t fileSize;
+        char wave[4];
 };
 #pragma pack(pop)
 
-// Read WAV file dynamically with logging
 bool readWavFile(const std::string& filename, WavHeader_Reader& header, std::vector<int16_t>& samples)
 {
     std::ifstream file(filename, std::ios::binary);
@@ -63,48 +62,16 @@ bool readWavFile(const std::string& filename, WavHeader_Reader& header, std::vec
             std::cout << "[INFO] Bits Per Sample: " << bitsPerSample << ", Byte Rate: " << byteRate << std::endl;
 
             if (chunkSize > 16)
-                file.seekg(chunkSize - 16, std::ios::cur); // Skip any extra fmt chunk bytes safely
+            {
+                // Skip any extra fmt chunk bytes safely
+                file.seekg(chunkSize - 16, std::ios::cur);
+            }
         }
         else if (std::string(chunkID, 4) == "data")
         {
             foundData = true;
-
-            // Confirm current file position
-            std::streampos posBefore = file.tellg();
-            std::cout << "[DEBUG] File position before reading dataSize: " << posBefore << std::endl;
-
-            // Check bytes before we read dataSize to confirm alignment
-            char checkBytes[8] = {};
-            file.read(checkBytes, 8);
-
-            std::cout << "[DEBUG] Next 8 bytes in file: "
-                      << std::hex << static_cast<int>(checkBytes[0]) << " "
-                      << static_cast<int>(checkBytes[1]) << " "
-                      << static_cast<int>(checkBytes[2]) << " "
-                      << static_cast<int>(checkBytes[3]) << " | "
-                      << static_cast<int>(checkBytes[4]) << " "
-                      << static_cast<int>(checkBytes[5]) << " "
-                      << static_cast<int>(checkBytes[6]) << " "
-                      << static_cast<int>(checkBytes[7]) << std::dec << std::endl;
-
-            //// Convert first 4 bytes into dataSize manually
-            //dataSize = static_cast<uint8_t>(checkBytes[0]) |
-            //           (static_cast<uint8_t>(checkBytes[1]) << 8) |
-            //           (static_cast<uint8_t>(checkBytes[2]) << 16) |
-            //           (static_cast<uint8_t>(checkBytes[3]) << 24);
-
-            // Hack:
-            // Limit data size to fit source
-            dataSize = static_cast<uint32_t>(std::filesystem::file_size(filename));
-
-            std::streampos posAfter = file.tellg();
-            std::cout << "[DEBUG] File position after reading dataSize: " << posAfter << std::endl;
-
-            std::cout << "[INFO] Found Data Chunk: " << dataSize << " bytes (Raw Bytes: "
-                      << std::hex << static_cast<int>(checkBytes[0]) << " "
-                      << static_cast<int>(checkBytes[1]) << " "
-                      << static_cast<int>(checkBytes[2]) << " "
-                      << static_cast<int>(checkBytes[3]) << std::dec << ")" << std::endl;
+            //dataSize = static_cast<uint32_t>(std::filesystem::file_size(filename)) - 44;
+            dataSize = chunkSize;
 
             if (bitsPerSample == 0 || numChannels == 0)
             {
@@ -121,10 +88,11 @@ bool readWavFile(const std::string& filename, WavHeader_Reader& header, std::vec
         else
         {
             std::cout << "[INFO] Skipping unknown chunk: " << std::string(chunkID, 4) << std::endl;
-
-            // Ensure skipping is within bounds
             if (chunkSize > 0)
+            {
+                // Ensure skipping is within bounds
                 file.seekg(chunkSize, std::ios::cur);
+            }
         }
     }
 
