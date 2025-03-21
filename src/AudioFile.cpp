@@ -42,7 +42,7 @@ AudioFile::AudioFile(AudioFileData data)
     header_writer.byteRate = header_writer.sampleRate * header_writer.numChannels * (header_writer.bitsPerSample / 8);
     header_writer.blockAlign = header_writer.numChannels * (header_writer.bitsPerSample / 8);
     header_writer.dataSize = static_cast<uint32_t>(data.samples.size()) * sizeof(int16_t);
-    header_writer.chunkSize = 36 + header_writer.dataSize;
+    header_writer.fileSize = 36 + header_writer.dataSize;
     if (!writeWavFile(data.filename, header_writer, data.samples))
     {
         std::cerr << "Failed to write output file: " << data.filename << std::endl;
