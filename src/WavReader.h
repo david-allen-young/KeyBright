@@ -126,7 +126,9 @@ bool readWavFile(const std::string& filename, WavHeader_Reader& header, std::vec
 
             // Ensure skipping is within bounds
             if (chunkSize > 0)
+            {
                 file.seekg(chunkSize, std::ios::cur);
+            }
         }
     }
 
