@@ -97,7 +97,7 @@ bool readWavFile(const std::string& filename, WavHeader_Reader& header, std::vec
 
             // Hack:
             // Limit data size to fit source
-            dataSize = static_cast<uint32_t>(std::filesystem::file_size(filename));
+            dataSize = static_cast<uint32_t>(std::filesystem::file_size(filename)) - 44;
 
             std::streampos posAfter = file.tellg();
             std::cout << "[DEBUG] File position after reading dataSize: " << posAfter << std::endl;
