@@ -10,7 +10,7 @@
 struct WavHeader_Reader
 {
         char riff[4];       // "RIFF"
-        uint32_t chunkSize; // File size - 8 bytes
+        uint32_t fileSize; // File size - 8 bytes
         char wave[4];       // "WAVE"
 };
 #pragma pack(pop)
