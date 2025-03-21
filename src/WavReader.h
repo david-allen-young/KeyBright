@@ -9,9 +9,9 @@
 #pragma pack(push, 1)
 struct WavHeader_Reader
 {
-        char riff[4];       // "RIFF"
-        uint32_t fileSize; // File size - 8 bytes
-        char wave[4];       // "WAVE"
+        char riff[4];
+        uint32_t fileSize;
+        char wave[4];
 };
 #pragma pack(pop)
 
