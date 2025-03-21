@@ -63,7 +63,9 @@ bool readWavFile(const std::string& filename, WavHeader_Reader& header, std::vec
             std::cout << "[INFO] Bits Per Sample: " << bitsPerSample << ", Byte Rate: " << byteRate << std::endl;
 
             if (chunkSize > 16)
+            {
                 file.seekg(chunkSize - 16, std::ios::cur); // Skip any extra fmt chunk bytes safely
+            }
         }
         else if (std::string(chunkID, 4) == "data")
         {
