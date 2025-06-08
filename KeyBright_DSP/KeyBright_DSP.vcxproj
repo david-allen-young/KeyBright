@@ -129,10 +129,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\AudioFile.cpp" />
     <ClCompile Include="KeyBright_DSP.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Args.h" />
+    <ClInclude Include="..\src\AudioFile.h" />
+    <ClInclude Include="..\src\HighShelfFilter.h" />
+    <ClInclude Include="..\src\LinearPitchShifter.h" />
+    <ClInclude Include="..\src\WavReader.h" />
+    <ClInclude Include="..\src\WavWriter.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
