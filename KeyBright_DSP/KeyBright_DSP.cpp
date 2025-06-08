@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
     std::string inputFile = argv[1];
     if (!std::filesystem::exists(inputFile))
     {
-        std::cerr << "Input file does not exist: " << inputFile << std::endl;
+        std::cerr << "Input file does not exist: " << inputFile << ". Terminating program." << std::endl;
         return ERROR_NOFILE;
     }
     int errorCode = ERROR_NONE;
@@ -58,6 +58,53 @@ int main(int argc, char* argv[])
             errorCode = ERROR_BOUNDS;
         }
     }
+    AudioFile sourceFile(inputFile);
+    std::cout << "Processing pitch and color for input file: " << inputFile << std::endl;
+    // PITCH =======================================================================
+    LinearPitchShifter pitchShifter;
+    int semitones = static_cast<int>(pitchArg) * 5;
+    auto outputSamples = pitchShifter.process(sourceFile.readSamples(), semitones);
+    // COLOR =======================================================================
+    double gainDB = 0.0;
+    switch (colorArg)
+    {
+    case ColorArg::Darkest:
+        gainDB = -16.0;
+        break;
+    case ColorArg::Dark:
+        gainDB = -12.0;
+        break;
+    case ColorArg::Neutral:
+        gainDB = -8.0;
+        break;
+    case ColorArg::Bright:
+        gainDB = -4.0;
+        break;
+    case ColorArg::Brightest:
+        gainDB = 0.0;
+        break;
+    default:
+        // this path should not be possible
+        std::cerr << "BAD COLOR ARG" << std::endl;
+        break;
+    }
+    const double cutoffFreq = 1000.0;
+    const double Q = 0.707;
+    HighShelfFilter hsFilter(sourceFile.getSampleRate(), cutoffFreq, gainDB, Q);
+    for (const auto& sample : sourceFile.readSamples())
+    {
+        auto processedSample = static_cast<int16_t>(hsFilter.process(sample));
+        outputSamples.push_back(processedSample);
+    }
+    // FILE ======================================================================
+    AudioFileData outputData = {};
+    outputData.samples = outputSamples;
+    outputData.numChannels = sourceFile.getNumChannels();
+    outputData.sampleRate = sourceFile.getSampleRate();
+    outputData.bitsPerSample = sourceFile.getBitsPerSample();
+    outputData.filename = outputFile;
+    AudioFile destFile(outputData);
+    std::cout << "Pitch and Color applied. Output saved to " << outputFile << std::endl;
     return errorCode;
 }
 
