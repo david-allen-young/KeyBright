@@ -1,20 +1,50 @@
-// KeyBright_DSP.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+#include "../src/Args.h"
+#include "../src/AudioFile.h"
+#include "../src/HighShelfFilter.h"
+#include "../src/LinearPitchShifter.h"
 
 #include <iostream>
+#include <filesystem>
 
-int main()
+int main(int argc, char* argv[])
 {
-    std::cout << "Hello World!\n";
+    std::cout << "Current Working Directory: " << std::filesystem::current_path() << std::endl;
+    if (argc != 5)
+    {
+        std::cerr << "Usage: " << "KeyBright_DSP" << " <inputFile> <outputFile> <color> <pitch>\n";
+        return 1;
+    }
+    int errorCode = 0;
+    std::string inputFile = argv[1];
+    std::string outputFile = argv[2];
+    ColorArg colorArg = ColorArg::Neutral;
+    if (std::isdigit(*argv[3]))
+    {
+        int argv3 = std::stoi(argv[3]);
+        if (argv3 >= -2 && argv3 <= 2)
+        {
+            colorArg = ColorArg(argv3);
+        }
+        else
+        {
+            std::cerr << "Invalid <color> argument. Reverting to default 'Neutral' 0." << std::endl;
+            errorCode = 2;
+        }
+    }
+    PitchArg pitchArg = PitchArg::Neutral;
+    if (std::isdigit(*argv[4]))
+    {
+        int argv4 = std::stoi(argv[4]);
+        if (argv4 >= -2 && argv4 <= 2)
+        {
+            pitchArg = PitchArg(argv4);
+        }
+        else
+        {
+            std::cerr << "Invalid <pitch> argument. Reverting to default 'Neutral' 0." << std::endl;
+            errorCode = 2;
+        }
+    }
+    return errorCode;
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
