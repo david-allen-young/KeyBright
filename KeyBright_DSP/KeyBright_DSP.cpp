@@ -6,16 +6,29 @@
 #include <iostream>
 #include <filesystem>
 
+enum ErrorCodes
+{
+    ERROR_NONE = 0,     // successful
+    ERROR_BOUNDS = 1,   // use default(s)
+    ERROR_NOFILE = 2,   // terminate
+    ERROR_NOARGS = 3,   // terminate
+};
+
 int main(int argc, char* argv[])
 {
     std::cout << "Current Working Directory: " << std::filesystem::current_path() << std::endl;
     if (argc != 5)
     {
         std::cerr << "Usage: " << "KeyBright_DSP" << " <inputFile> <outputFile> <color> <pitch>\n";
-        return 1;
+        return ERROR_NOARGS;
     }
-    int errorCode = 0;
     std::string inputFile = argv[1];
+    if (!std::filesystem::exists(inputFile))
+    {
+        std::cerr << "Input file does not exist: " << inputFile << std::endl;
+        return ERROR_NOFILE;
+    }
+    int errorCode = ERROR_NONE;
     std::string outputFile = argv[2];
     ColorArg colorArg = ColorArg::Neutral;
     if (std::isdigit(*argv[3]))
@@ -28,7 +41,7 @@ int main(int argc, char* argv[])
         else
         {
             std::cerr << "Invalid <color> argument. Reverting to default 'Neutral' 0." << std::endl;
-            errorCode = 2;
+            errorCode = ERROR_BOUNDS;
         }
     }
     PitchArg pitchArg = PitchArg::Neutral;
@@ -42,7 +55,7 @@ int main(int argc, char* argv[])
         else
         {
             std::cerr << "Invalid <pitch> argument. Reverting to default 'Neutral' 0." << std::endl;
-            errorCode = 2;
+            errorCode = ERROR_BOUNDS;
         }
     }
     return errorCode;
