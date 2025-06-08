@@ -1,20 +1,110 @@
-// KeyBright_DSP.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+#include "../src/Args.h"
+#include "../src/AudioFile.h"
+#include "../src/HighShelfFilter.h"
+#include "../src/LinearPitchShifter.h"
 
 #include <iostream>
+#include <filesystem>
 
-int main()
+enum ErrorCodes
 {
-    std::cout << "Hello World!\n";
+    ERROR_NONE = 0,     // successful
+    ERROR_BOUNDS = 1,   // use default(s)
+    ERROR_NOFILE = 2,   // terminate
+    ERROR_NOARGS = 3,   // terminate
+};
+
+int main(int argc, char* argv[])
+{
+    std::cout << "Current Working Directory: " << std::filesystem::current_path() << std::endl;
+    if (argc != 5)
+    {
+        std::cerr << "Usage: " << "KeyBright_DSP" << " <inputFile> <outputFile> <color> <pitch>\n";
+        return ERROR_NOARGS;
+    }
+    std::string inputFile = argv[1];
+    if (!std::filesystem::exists(inputFile))
+    {
+        std::cerr << "Input file does not exist: " << inputFile << ". Terminating program." << std::endl;
+        return ERROR_NOFILE;
+    }
+    int errorCode = ERROR_NONE;
+    std::string outputFile = argv[2];
+    ColorArg colorArg = ColorArg::Neutral;
+    if (std::isdigit(*argv[3]))
+    {
+        int argv3 = std::stoi(argv[3]);
+        if (argv3 >= -2 && argv3 <= 2)
+        {
+            colorArg = ColorArg(argv3);
+        }
+        else
+        {
+            std::cerr << "Invalid <color> argument. Reverting to default 'Neutral' 0." << std::endl;
+            errorCode = ERROR_BOUNDS;
+        }
+    }
+    PitchArg pitchArg = PitchArg::Neutral;
+    if (std::isdigit(*argv[4]))
+    {
+        int argv4 = std::stoi(argv[4]);
+        if (argv4 >= -2 && argv4 <= 2)
+        {
+            pitchArg = PitchArg(argv4);
+        }
+        else
+        {
+            std::cerr << "Invalid <pitch> argument. Reverting to default 'Neutral' 0." << std::endl;
+            errorCode = ERROR_BOUNDS;
+        }
+    }
+    AudioFile sourceFile(inputFile);
+    std::cout << "Processing pitch and color for input file: " << inputFile << std::endl;
+    // PITCH =======================================================================
+    LinearPitchShifter pitchShifter;
+    int semitones = static_cast<int>(pitchArg) * 5;
+    auto outputSamples = pitchShifter.process(sourceFile.readSamples(), semitones);
+    // COLOR =======================================================================
+    double gainDB = 0.0;
+    switch (colorArg)
+    {
+    case ColorArg::Darkest:
+        gainDB = -16.0;
+        break;
+    case ColorArg::Dark:
+        gainDB = -12.0;
+        break;
+    case ColorArg::Neutral:
+        gainDB = -8.0;
+        break;
+    case ColorArg::Bright:
+        gainDB = -4.0;
+        break;
+    case ColorArg::Brightest:
+        gainDB = 0.0;
+        break;
+    default:
+        // this path should not be possible
+        std::cerr << "BAD COLOR ARG" << std::endl;
+        break;
+    }
+    const double cutoffFreq = 1000.0;
+    const double Q = 0.707;
+    HighShelfFilter hsFilter(sourceFile.getSampleRate(), cutoffFreq, gainDB, Q);
+    for (const auto& sample : sourceFile.readSamples())
+    {
+        auto processedSample = static_cast<int16_t>(hsFilter.process(sample));
+        outputSamples.push_back(processedSample);
+    }
+    // FILE ======================================================================
+    AudioFileData outputData = {};
+    outputData.samples = outputSamples;
+    outputData.numChannels = sourceFile.getNumChannels();
+    outputData.sampleRate = sourceFile.getSampleRate();
+    outputData.bitsPerSample = sourceFile.getBitsPerSample();
+    outputData.filename = outputFile;
+    AudioFile destFile(outputData);
+    std::cout << "Pitch and Color applied. Output saved to " << outputFile << std::endl;
+    return errorCode;
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
