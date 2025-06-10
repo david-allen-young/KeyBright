@@ -31,32 +31,26 @@ int main(int argc, char* argv[])
     int errorCode = ERROR_NONE;
     std::string outputFile = argv[2];
     ColorArg colorArg = ColorArg::Neutral;
-    if (std::isdigit(*argv[3]))
+    int argv3 = std::stoi(argv[3]);
+    if (argv3 >= -2 && argv3 <= 2)
     {
-        int argv3 = std::stoi(argv[3]);
-        if (argv3 >= -2 && argv3 <= 2)
-        {
-            colorArg = ColorArg(argv3);
-        }
-        else
-        {
-            std::cerr << "Invalid <color> argument. Reverting to default 'Neutral' 0." << std::endl;
-            errorCode = ERROR_BOUNDS;
-        }
+        colorArg = ColorArg(argv3);
+    }
+    else
+    {
+        std::cerr << "Invalid <color> argument. Reverting to default 'Neutral' 0." << std::endl;
+        errorCode = ERROR_BOUNDS;
     }
     PitchArg pitchArg = PitchArg::Neutral;
-    if (std::isdigit(*argv[4]))
+    int argv4 = std::stoi(argv[4]);
+    if (argv4 >= -2 && argv4 <= 2)
     {
-        int argv4 = std::stoi(argv[4]);
-        if (argv4 >= -2 && argv4 <= 2)
-        {
-            pitchArg = PitchArg(argv4);
-        }
-        else
-        {
-            std::cerr << "Invalid <pitch> argument. Reverting to default 'Neutral' 0." << std::endl;
-            errorCode = ERROR_BOUNDS;
-        }
+        pitchArg = PitchArg(argv4);
+    }
+    else
+    {
+        std::cerr << "Invalid <pitch> argument. Reverting to default 'Neutral' 0." << std::endl;
+        errorCode = ERROR_BOUNDS;
     }
     AudioFile sourceFile(inputFile);
     std::cout << "Processing pitch and color for input file: " << inputFile << std::endl;
@@ -91,10 +85,9 @@ int main(int argc, char* argv[])
     const double cutoffFreq = 1000.0;
     const double Q = 0.707;
     HighShelfFilter hsFilter(sourceFile.getSampleRate(), cutoffFreq, gainDB, Q);
-    for (const auto& sample : sourceFile.readSamples())
+    for (auto& sample : outputSamples)
     {
-        auto processedSample = static_cast<int16_t>(hsFilter.process(sample));
-        outputSamples.push_back(processedSample);
+        hsFilter.process(sample);
     }
     // FILE ======================================================================
     AudioFileData outputData = {};
