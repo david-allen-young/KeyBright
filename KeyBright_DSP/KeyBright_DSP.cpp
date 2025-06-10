@@ -12,6 +12,7 @@ enum ErrorCodes
     ERROR_BOUNDS = 1,   // use default(s)
     ERROR_NOFILE = 2,   // terminate
     ERROR_NOARGS = 3,   // terminate
+    ERROR_BADARGS = 4, // terminate
 };
 
 int main(int argc, char* argv[])
@@ -31,26 +32,42 @@ int main(int argc, char* argv[])
     int errorCode = ERROR_NONE;
     std::string outputFile = argv[2];
     ColorArg colorArg = ColorArg::Neutral;
-    int argv3 = std::stoi(argv[3]);
-    if (argv3 >= -2 && argv3 <= 2)
+    try
     {
-        colorArg = ColorArg(argv3);
+        int argv3 = std::stoi(argv[3]);
+        if (argv3 >= -2 && argv3 <= 2)
+        {
+            colorArg = ColorArg(argv3);
+        }
+        else
+        {
+            std::cerr << "Out of bounds <color> argument. Reverting to default 'Neutral' 0." << std::endl;
+            errorCode = ERROR_BOUNDS;
+        }
     }
-    else
+    catch (const std::invalid_argument&)
     {
-        std::cerr << "Invalid <color> argument. Reverting to default 'Neutral' 0." << std::endl;
-        errorCode = ERROR_BOUNDS;
+        std::cerr << "Invalid <color> argument. Must be an integer. Terminating program." << std::endl;
+        return ERROR_BADARGS;
     }
     PitchArg pitchArg = PitchArg::Neutral;
-    int argv4 = std::stoi(argv[4]);
-    if (argv4 >= -2 && argv4 <= 2)
+    try
     {
-        pitchArg = PitchArg(argv4);
+        int argv4 = std::stoi(argv[4]);
+        if (argv4 >= -2 && argv4 <= 2)
+        {
+            pitchArg = PitchArg(argv4);
+        }
+        else
+        {
+            std::cerr << "Out of bounds <pitch> argument. Reverting to default 'Neutral' 0." << std::endl;
+            errorCode = ERROR_BOUNDS;
+        }
     }
-    else
+    catch (const std::invalid_argument&)
     {
-        std::cerr << "Invalid <pitch> argument. Reverting to default 'Neutral' 0." << std::endl;
-        errorCode = ERROR_BOUNDS;
+        std::cerr << "Invalid <pitch> argument. Must be an integer. Terminating program." << std::endl;
+        return ERROR_BADARGS;
     }
     AudioFile sourceFile(inputFile);
     std::cout << "Processing pitch and color for input file: " << inputFile << std::endl;
